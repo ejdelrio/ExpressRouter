@@ -33,6 +33,7 @@ namespace ExpressRouter.Classes
             DefinedRoutes.Add(path, server);
         }
 
+        
         public void AddServer(string path, params MiddleWareOperation<T>[] middleWareItems)
         {
             AddServer(path, path, middleWareItems);
@@ -91,7 +92,12 @@ namespace ExpressRouter.Classes
             return res;
         }
 
-
+        /// <summary>
+        /// Validates pathis in dictionary
+        /// Indexes the dictionary of defined routes. 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>server associated with given path</returns>
         IServable<T> GetServer(string path)
         {
             bool RouteIsNotDefined = DefinedRoutes.ContainsKey(path);
