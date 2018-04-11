@@ -7,9 +7,11 @@ using ExpressRouter.Interfaces;
 
 namespace ExpressRouter.Exceptions
 {
-    class Router400ErrorNoResponseDefined<T> : Router400BadRequestException<T>
+    class Router400ErrorNoResponseDefined<T> : RouterAbstractException<T>
     {
-        public Router400ErrorNoResponseDefined(IRequestable<T> req) : base(req)
+        public Router400ErrorNoResponseDefined(IRequestable<T> req) : base(404, req)
         { }
+
+
     }
 }

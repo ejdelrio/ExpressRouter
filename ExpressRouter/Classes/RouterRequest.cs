@@ -7,8 +7,9 @@ using ExpressRouter.Interfaces;
 
 namespace ExpressRouter.Classes
 {
-    public class RouterRequest<T> : IRequestable<T>
+    public class RouterRequest<T> : IRequestable<T>, IExceptionable
     {
+        public Exception Error { get; private set; }
         public string Path { get; private set; }
         public T Body { get; set; }
         public RouterRequest(string path, T body)

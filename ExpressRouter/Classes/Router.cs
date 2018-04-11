@@ -83,9 +83,8 @@ namespace ExpressRouter.Classes
                 throw new ArgumentNullException();
 
             IServable<T> server = GetServer(req.Path);
-            var parsedReq = ValidateRouteProcesses(req, server);
+            var res = ValidateRouteProcesses(req, server);
 
-            IResponsable<T> res = new RouterResponse<T>(req);
             if (res == null)
                 throw new Router400ErrorNoResponseDefined<T>(req);
 
@@ -102,7 +101,7 @@ namespace ExpressRouter.Classes
         {
             bool RouteIsNotDefined = DefinedRoutes.ContainsKey(path);
             if (!RouteIsNotDefined)
-                throw new Router404Exception(path);
+                throw new Router404PathNotFoundException<T>(path);
 
             var StoredServerInteface = DefinedRoutes[path];
             return StoredServerInteface;

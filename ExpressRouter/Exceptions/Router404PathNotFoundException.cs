@@ -7,13 +7,12 @@ using ExpressRouter.Interfaces;
 
 namespace ExpressRouter.Exceptions
 {
-    public class Router400BadRequestException<T> : RouterAbstractException<T>
+    public class Router404PathNotFoundException<T> : RouterAbstractException<T>
     {
 
-
-        public Router400BadRequestException(IRequestable<T> req) : base(404, req)
+        public Router404PathNotFoundException(string path) : base(404, path)
         {
-        }
 
+        }
     }
 }

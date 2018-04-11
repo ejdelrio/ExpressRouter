@@ -65,8 +65,8 @@ namespace ExpressRouter.Test
         public void Test404NotFoundRequestConstructor()
         {
             var testPath = "test";
-            var testException = new Router404Exception(testPath);
-            var testTwo = new Router404Exception();
+            var testException = new Router404PathNotFoundException<int>(testPath);
+
 
             var actual = testException.Path;
 

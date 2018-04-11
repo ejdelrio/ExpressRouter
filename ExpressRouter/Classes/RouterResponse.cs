@@ -7,7 +7,7 @@ using ExpressRouter.Interfaces;
 
 namespace ExpressRouter.Classes
 {
-    public class RouterResponse<T> : IResponsable<T>
+    public class RouterResponse<T> : IResponsable<T>, IExceptionable
     {
         /// <summary>
         /// Path which the response originated from
@@ -19,6 +19,8 @@ namespace ExpressRouter.Classes
         /// Body passed to the request after the body has been parsed
         /// </summary>
         public T Body { get; private set; }
+
+        public Exception Error { get; private set; }
 
         /// <summary>
         /// Passes the response's contents to the instance of the RouterResponse

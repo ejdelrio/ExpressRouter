@@ -107,13 +107,21 @@ namespace ExpressRouter.Test
         {
             var MockReq = new Mock<IRequestable<int>>(MockBehavior.Strict);
             var MockRes = new Mock<IResponsable<int>>(MockBehavior.Strict);
+
             MockReq.Setup(x => x.Path).Returns("test");
             MockReq.Setup(x => x.Body).Returns(2);
+
+            MockRes.Setup(x => x.Path).Returns("test");
+            MockRes.Setup(x => x.Body).Returns(2);
 
             var testPath = "test";
             var testDictionary = new Dictionary<string, IServable<int>>();
             var testRouter = new Router<int>(testDictionary);
-            MiddleWareOperation<int> testMW = (ref IRequestable<int> req, ref IResponsable<int> res) => { return; };
+
+            MiddleWareOperation<int> testMW = (ref IRequestable<int> req, ref IResponsable<int> res) => {
+                req = MockReq.Object;
+                res = MockRes.Object;
+            };
 
             testRouter.AddServer(testPath, testMW);
 
@@ -128,6 +136,8 @@ namespace ExpressRouter.Test
             Assert.AreEqual(expectedOne, actualOne);
             Assert.AreEqual(expectedTwo, actualTwo);
         }
+
+
         [TestMethod]
         [ExpectedException(typeof(Router400BadRequestException<int>))]
         public void TestGetRequestFromServerMethodWithBadRequest()
@@ -148,7 +158,7 @@ namespace ExpressRouter.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Router404Exception))]
+        [ExpectedException(typeof(Router404PathNotFoundException<int>))]
         public void TestGetResponseFromServerMethodWithInvalidRoute()
         {
             var MockReq = new Mock<IRequestable<int>>(MockBehavior.Strict);
