@@ -60,12 +60,13 @@ namespace ExpressRouter.Classes
         /// <param name="req">Instance of request passed to the router</param>
         /// <param name="middleWareItems">Series of functions that take a request and return a processed resquest</param>
         /// <returns>Parsed Request</returns>
-       IRequestable<T> ParseRequest(IRequestable<T> req, params MiddleWareOperation<T>[] middleWareItems)
+       IResponsable<T> ParseRequest(IRequestable<T> req, params MiddleWareOperation<T>[] middleWareItems)
         {
+            IResponsable<T> res = null;
             foreach (var operation in middleWareItems)
-                req = operation(req);
+                operation(ref req, ref res);
 
-            return req;
+            return res;
         }
 
 
@@ -84,6 +85,9 @@ namespace ExpressRouter.Classes
             var parsedReq = ValidateRouteProcesses(req, server);
 
             IResponsable<T> res = new RouterResponse<T>(req);
+            if (res == null)
+                throw new Router400ErrorNoResponseDefined<T>(req);
+
             return res;
         }
 
@@ -104,17 +108,17 @@ namespace ExpressRouter.Classes
         /// <param name="req">Request to be parsed</param>
         /// <param name="server">Server containing functionality to be used</param>
         /// <returns>A parsed request or an exception</returns>
-        IRequestable<T> ValidateRouteProcesses(IRequestable<T> req, IServable<T> server)
+        IResponsable<T> ValidateRouteProcesses(IRequestable<T> req, IServable<T> server)
         {
             try
             {
-                req = server.Process(req);
+                IResponsable<T> res = server.Process(req);
+                return res;
             }
             catch(Exception)
             {
                 throw new Router400BadRequestException<T>(req);
             }
-            return req;
         }
 
     }

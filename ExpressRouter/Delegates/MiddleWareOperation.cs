@@ -13,5 +13,5 @@ namespace ExpressRouter.Delegates
     /// <typeparam name="T">defines body of the input and output</typeparam>
     /// <param name="req">Request to be parsed be a function definition</param>
     /// <returns>Same request after it's been processed</returns>
-    public delegate IRequestable<T> MiddleWareOperation<T>(IRequestable<T> req);
+    public delegate void MiddleWareOperation<T>(ref IRequestable<T> req, ref IResponsable<T> res);
 }

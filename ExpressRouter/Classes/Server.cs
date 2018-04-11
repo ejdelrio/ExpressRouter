@@ -17,14 +17,14 @@ namespace ExpressRouter.Classes
         /// <summary>
         /// function that is defined on instantiation. Takes and returns the same data type after it's been parsed
         /// </summary>
-        public Func<IRequestable<T>, IRequestable<T>> Process { get; private set; }
-        public Server(string description, Func<IRequestable<T>, IRequestable<T>> process)
+        public Func<IRequestable<T>, IResponsable<T>> Process { get; private set; }
+        public Server(string description, Func<IRequestable<T>, IResponsable<T>> process)
         {
             Description = description;
             Process = process;
         }
 
-        public Server(Func<IRequestable<T>, IRequestable<T>> process) : this("No descrption provided.", process)
+        public Server(Func<IRequestable<T>, IResponsable<T>> process) : this("No descrption provided.", process)
         { }
 
     }

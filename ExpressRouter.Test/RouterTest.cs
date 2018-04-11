@@ -1,12 +1,11 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using ExpressRouter.Classes;
-using ExpressRouter.Interfaces;
+﻿using ExpressRouter.Classes;
 using ExpressRouter.Delegates;
 using ExpressRouter.Exceptions;
+using ExpressRouter.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System;
+using System.Collections.Generic;
 
 namespace ExpressRouter.Test
 {
@@ -107,14 +106,16 @@ namespace ExpressRouter.Test
         public void TestGetRequestFromServerMethod()
         {
             var MockReq = new Mock<IRequestable<int>>(MockBehavior.Strict);
+            var MockRes = new Mock<IResponsable<int>>(MockBehavior.Strict);
             MockReq.Setup(x => x.Path).Returns("test");
             MockReq.Setup(x => x.Body).Returns(2);
 
             var testPath = "test";
             var testDictionary = new Dictionary<string, IServable<int>>();
             var testRouter = new Router<int>(testDictionary);
+            MiddleWareOperation<int> testMW = (ref IRequestable<int> req, ref IResponsable<int> res) => { return; };
 
-            testRouter.AddServer(testPath, req => req);
+            testRouter.AddServer(testPath, testMW);
 
             var output = testRouter.GetResponseFromServer(MockReq.Object);
 
@@ -138,8 +139,10 @@ namespace ExpressRouter.Test
             var testPath = "test";
             var testDictionary = new Dictionary<string, IServable<int>>();
             var testRouter = new Router<int>(testDictionary);
+            MiddleWareOperation<int> testMW = (ref IRequestable<int> req, ref IResponsable<int> res) => { throw new Exception(); };
 
-            testRouter.AddServer(testPath, req => throw new Exception());
+            testRouter.AddServer(testPath, testMW);
+
 
             testRouter.GetResponseFromServer(MockReq.Object);
         }
@@ -155,8 +158,9 @@ namespace ExpressRouter.Test
             var testPath = "bacon cheeseburgers are life";
             var testDictionary = new Dictionary<string, IServable<int>>();
             var testRouter = new Router<int>(testDictionary);
+            MiddleWareOperation<int> testMW = (ref IRequestable<int> req, ref IResponsable<int> res) => { throw new Exception(); };
 
-            testRouter.AddServer(testPath, req => throw new Exception());
+            testRouter.AddServer(testPath, testMW);
 
             testRouter.GetResponseFromServer(MockReq.Object);
         }

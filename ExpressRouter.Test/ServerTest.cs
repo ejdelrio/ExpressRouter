@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ExpressRouter.Classes;
 using ExpressRouter.Interfaces;
+using ExpressRouter.Delegates;
+using Moq;
 
 
 namespace ExpressRouter.Test
@@ -64,13 +66,26 @@ namespace ExpressRouter.Test
         [TestMethod]
         public void TestServerConstructor()
         {
+            var MockRes = new Mock<IResponsable<int>>(MockBehavior.Strict);
             var expected = "testString";
             var expectedTwo = "No descrption provided.";
-            var testServer = new Server<int>(expected, (x) => x);
-            var secondTestServer = new Server<int>(x => x);
+            var testPath = "test";
+            var testDictionary = new Dictionary<string, IServable<int>>();
+            var testRouter = new Router<int>(testDictionary);
+
+            Func<IRequestable<int>, IResponsable<int>> testFunc = (req) => { return MockRes.Object; };
+            MiddleWareOperation<int> testMW = (ref IRequestable<int> req, ref IResponsable<int> res) => { throw new Exception(); };
+
+            testRouter.AddServer(testPath, testMW);
+
+
+            var testServer = new Server<int>(expected, testFunc);
+            var secondTestServer = new Server<int>(testFunc);
+
 
             var actual = testServer.Description;
             var actualTwo = secondTestServer.Description;
+
 
             Assert.AreEqual(expected, actual);
             Assert.AreEqual(expectedTwo, actualTwo);
