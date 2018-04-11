@@ -43,8 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Router.cs" />
+    <Compile Include="Classes\RouterRequest.cs" />
+    <Compile Include="Classes\RouterResponse.cs" />
     <Compile Include="Classes\Server.cs" />
     <Compile Include="Delegates\MiddleWareOperation.cs" />
+    <Compile Include="Exceptions\Router400BadRequestException.cs" />
+    <Compile Include="Exceptions\Router404Exception.cs" />
     <Compile Include="Interfaces\IRequestable.cs" />
     <Compile Include="Interfaces\IResponsable.cs" />
     <Compile Include="Interfaces\IRoute.cs" />

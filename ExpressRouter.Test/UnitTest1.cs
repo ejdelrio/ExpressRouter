@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ExpressRouter;
 
 namespace ExpressRouter.Test
 {
@@ -9,6 +10,7 @@ namespace ExpressRouter.Test
         [TestMethod]
         public void TestMethod1()
         {
+            Program.Main(new string[0]);
         }
     }
 }

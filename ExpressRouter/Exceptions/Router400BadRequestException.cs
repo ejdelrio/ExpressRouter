@@ -5,20 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using ExpressRouter.Interfaces;
 
-namespace ExpressRouter.Classes
+namespace ExpressRouter.Exceptions
 {
-    public class RouterResponse<T> : IResponsable<T>
+    public class Router400BadRequestException<T> : Exception
     {
         public string Path { get; private set; }
-
         public T Body { get; private set; }
 
-        public RouterResponse(IRequestable<T> req)
+        public Router400BadRequestException(IRequestable<T> req)
         {
             Path = req.Path;
             Body = req.Body;
         }
 
-        
     }
 }

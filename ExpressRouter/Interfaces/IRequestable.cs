@@ -8,8 +8,8 @@ namespace ExpressRouter.Interfaces
 {
     public interface IRequestable<T>
     {
-        IRoute Path { get; }
-        T Body { get; }
+        string Path { get; }
+        T Body { get; set;}
     }
 
 }

@@ -8,7 +8,7 @@ namespace ExpressRouter.Interfaces
 {
     public interface IResponsable<T>
     {
-        IRoute Path { get; }
+        string Path { get; }
         T Body { get; }
     }
 }

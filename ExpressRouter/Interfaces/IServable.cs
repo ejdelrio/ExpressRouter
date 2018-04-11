@@ -8,6 +8,7 @@ namespace ExpressRouter.Interfaces
 {
     public interface IServable<T>
     {
-        Func<IRequestable<T>, IResponsable<T>> Process { get; }
+        string Description { get; }
+        Func<IRequestable<T>, IRequestable<T>> Process { get; }
     }
 }

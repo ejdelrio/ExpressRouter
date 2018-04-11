@@ -5,25 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 using ExpressRouter.Delegates;
 using ExpressRouter.Interfaces;
+using ExpressRouter.Exceptions;
 
 namespace ExpressRouter.Classes
 {
     public class Router<T> : IRouterable<T>
     {
-        public Dictionary<IRoute, IServable<T>> DefinedRoutes { get; private set; }
+        public Dictionary<string, IServable<T>> DefinedRoutes { get; private set; }
+        public Router (Dictionary<string, IServable<T>> dict)
+        {
+            DefinedRoutes = dict;
+        }
+
+
         /// <summary>
         /// Takes a route and a series of functions to construct a server for the given route.
         /// The server will reference the series of functions and pass the request through each function
         /// </summary>
         /// <param name="route">Route with given path and description</param>
         /// <param name="middleWareItems">Series of middle ware functions to parse a request</param>
-        public void AddServer(IRoute route, params MiddleWareOperation<T>[] middleWareItems)
+        public void AddServer(string path, string description, params MiddleWareOperation<T>[] middleWareItems)
         {
-            if (route == null)
+            if (path == null)
                 throw new ArgumentNullException();
 
-            IServable<T> server = DefineServer(middleWareItems);
-            DefinedRoutes.Add(route, server);
+            IServable<T> server = DefineServer(description, middleWareItems);
+            DefinedRoutes.Add(path, server);
+        }
+
+        public void AddServer(string path, params MiddleWareOperation<T>[] middleWareItems)
+        {
+            AddServer(path, path, middleWareItems);
         }
 
 
@@ -33,12 +45,15 @@ namespace ExpressRouter.Classes
         /// </summary>
         /// <param name="middleWareItems">series of Generic functions that take type t and return type t</param>
         /// <returns>an instance of a server with it's new process defined</returns>
-        IServable<T> DefineServer(params MiddleWareOperation<T>[] middleWareItems)
+        IServable<T> DefineServer(string description, params MiddleWareOperation<T>[] middleWareItems)
         {
-            IServable<T> server = new Server<T>(req => GetResponseFromServer(req, middleWareItems));
+            IServable<T> server = new Server<T>(description, req => ParseRequest(req, middleWareItems));
 
             return server;
         }
+
+
+
         /// <summary>
         /// Passes requet through variable number of functions that are saved to the server instance
         /// </summary>
@@ -53,35 +68,54 @@ namespace ExpressRouter.Classes
             return req;
         }
 
+
         /// <summary>
         /// constructs a response from the parsed user request
         /// </summary>
         /// <param name="req">Request passed on the instance of the Router query. Will constantly change for the route</param>
         /// <param name="middleWareItems">Middle ware saved to the instance of a server. The middle ware will be constant</param>
         /// <returns>A response constructed from a parsed request body</returns>
-        public IResponsable<T> GetResponseFromServer(IRequestable<T> req, params MiddleWareOperation<T>[] middleWareItems)
+        public IResponsable<T> GetResponseFromServer(IRequestable<T> req)
         {
-            IRequestable<T> parsedReq = ParseRequest(req, middleWareItems);
-            IResponsable<T> res = new RouterResponse(parsedReq);
+            if (req == null)
+                throw new ArgumentNullException();
 
+            IServable<T> server = GetServer(req.Path);
+            var parsedReq = ValidateRouteProcesses(req, server);
+
+            IResponsable<T> res = new RouterResponse<T>(req);
             return res;
         }
 
 
-        IServable<T> GetServer(IRoute route)
+        IServable<T> GetServer(string path)
         {
-            bool RouteIsNotDefined = DefinedRoutes.ContainsKey(route);
-            if (RouteIsNotDefined)
-                throw new KeyNotFoundException();
+            bool RouteIsNotDefined = DefinedRoutes.ContainsKey(path);
+            if (!RouteIsNotDefined)
+                throw new Router404Exception(path);
 
-            var StoredServerInteface = DefinedRoutes[route];
+            var StoredServerInteface = DefinedRoutes[path];
             return StoredServerInteface;
         }
-
-
-        public void AddServer(IRoute route, IServable<T> server)
+        /// <summary>
+        /// Attempts to parse passed request with the routes middleware.
+        /// Throw a custom exception if the function fails
+        /// </summary>
+        /// <param name="req">Request to be parsed</param>
+        /// <param name="server">Server containing functionality to be used</param>
+        /// <returns>A parsed request or an exception</returns>
+        IRequestable<T> ValidateRouteProcesses(IRequestable<T> req, IServable<T> server)
         {
-            throw new NotImplementedException();
+            try
+            {
+                req = server.Process(req);
+            }
+            catch(Exception)
+            {
+                throw new Router400BadRequestException<T>(req);
+            }
+            return req;
         }
+
     }
 }

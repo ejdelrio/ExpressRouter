@@ -5,18 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using ExpressRouter.Interfaces;
 
-namespace ExpressRouter.Classes
+namespace ExpressRouter.Exceptions
 {
-    public class RouterRequest<T> : IRequestable<T>
+    public class Router404Exception : Exception
     {
         public string Path { get; private set; }
-        public T Body { get; set; }
-        public RouterRequest(string path, T body)
+        public Router404Exception()
         {
-            Path = path;
-            Body = body;
         }
+        public Router404Exception(string path)
+        {
 
-
+            Path = path;
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace ExpressRouter.Interfaces
 {
     public interface IRouterable<T>
     {
-        IResponsable<T> GetResponseFromServer(IRequestable<T> req, params MiddleWareOperation<T>[] middleWareItems);
-        void AddServer(IRoute route, IServable<T> server);
+        IResponsable<T> GetResponseFromServer(IRequestable<T> req);
+        void AddServer(string path, params MiddleWareOperation<T>[] middleWareItems);
     }
 }
